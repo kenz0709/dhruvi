@@ -28,6 +28,14 @@ body{
   font-family:system-ui,sans-serif;
   overflow:hidden;
   padding:16px;
+  opacity:0;
+  transform:scale(0.95);
+  transition:opacity 1s ease, transform 1s ease;
+}
+
+body.loaded{
+  opacity:1;
+  transform:scale(1);
 }
 
 #confettiCanvas{
@@ -133,10 +141,10 @@ button{
 
 <canvas id="confettiCanvas"></canvas>
 
-<!-- 🎵 Kesariya (tap-to-play) -->
+<!-- 🎵 Music -->
 <audio id="bgMusic" loop>
-  <!-- REPLACE with your own Kesariya MP3 link -->
-  <source src="https://docs.google.com/uc?export=download&id=1Xcy42_Xitzju75cW-ipFBnouCc1FNbgT" type="audio/mpeg">
+  <!-- Publicly accessible MP3 link -->
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
 
 <main class="card">
@@ -164,14 +172,18 @@ C140 210 90 180 90 120Z" fill="#f2a97b"/>
 <section class="result" id="result">
   <h2>YAYYYY 💖</h2>
   <p style="font-size:18px;line-height:1.5">
-    Jaise Shiv bina Parvati adhura,
-Waise hi main tumhare bina adhoora
+Jaise Shiv bina Parvati adhura,<br>
+Waise hi main tumhare bina adhoora.<br>
+Dooriyon mein bhi bas tumhara ehsaas hai,<br>
+Meri duniya tumhare saath hi poorn hai. 💖
   </p>
 </section>
 
 </main>
 
 <script>
+window.addEventListener("load",()=>document.body.classList.add("loaded"));
+
 const zone=document.getElementById("zone");
 const yesBtn=document.getElementById("yesBtn");
 const noBtn=document.getElementById("noBtn");
@@ -179,12 +191,11 @@ const result=document.getElementById("result");
 const hint=document.getElementById("hint");
 const music=document.getElementById("bgMusic");
 
-/* Tap to start music */
-document.body.addEventListener("click", () => {
-  if (music.paused) {
+/* Tap or Yes click to start music */
+function startMusic(){
+  if(music.paused){
     music.volume = 0;
-    music.play();
-
+    music.play().catch(()=>{}); // avoid errors
     let v = 0;
     const fade = setInterval(() => {
       v += 0.02;
@@ -192,7 +203,8 @@ document.body.addEventListener("click", () => {
       if (v >= 0.6) clearInterval(fade);
     }, 120);
   }
-}, { once: true });
+}
+document.body.addEventListener("click", startMusic, { once: true });
 
 /* Confetti */
 const canvas=document.getElementById("confettiCanvas");
@@ -224,9 +236,19 @@ yesBtn.onclick=()=>{
   hint.style.display="none";
   result.style.display="block";
   confettiInstance({particleCount:300,spread:140});
+  startMusic(); // ensure music plays
+  // Heart burst
+  for(let i=0;i<30;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.textContent=["❤️","💖","💘","💞"][Math.floor(Math.random()*4)];
+    h.style.left=(50 + Math.random()*20-10)+"%";
+    h.style.bottom="40px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  }
 };
 </script>
 
 </body>
 </html>
-
