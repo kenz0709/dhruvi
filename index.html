@@ -180,12 +180,19 @@ const hint=document.getElementById("hint");
 const music=document.getElementById("bgMusic");
 
 /* Tap to start music */
-document.body.addEventListener("click",()=>{
-  if(music.paused){
-    music.volume=0.6;
+document.body.addEventListener("click", () => {
+  if (music.paused) {
+    music.volume = 0;
     music.play();
+
+    let v = 0;
+    const fade = setInterval(() => {
+      v += 0.02;
+      music.volume = Math.min(v, 0.6);
+      if (v >= 0.6) clearInterval(fade);
+    }, 120);
   }
-},{once:true});
+}, { once: true });
 
 /* Confetti */
 const canvas=document.getElementById("confettiCanvas");
