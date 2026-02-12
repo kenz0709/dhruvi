@@ -98,6 +98,20 @@ button{
   background:#e5e7eb;
 }
 
+#playMusicBtn{
+  position:relative;
+  margin:16px auto 0;
+  display:block;
+  padding:12px 20px;
+  font-size:16px;
+  border-radius:999px;
+  border:none;
+  background:#ff6ea1;
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.14);
+}
+
 .hint{
   margin-top:10px;
   font-size:13px;
@@ -134,18 +148,19 @@ button{
     opacity:0;
   }
 }
+
+/* Hide YouTube iframe */
+#ytPlayer{
+  width:0;
+  height:0;
+  border:0;
+}
 </style>
 </head>
 
 <body>
 
 <canvas id="confettiCanvas"></canvas>
-
-<!-- 🎵 Music -->
-<audio id="bgMusic" loop>
-  <!-- Publicly accessible MP3 link -->
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
 
 <main class="card">
 
@@ -167,6 +182,8 @@ C140 210 90 180 90 120Z" fill="#f2a97b"/>
   <button id="noBtn">No</button>
 </section>
 
+<button id="playMusicBtn">Tap to play Kesariya 🎵</button>
+
 <div class="hint" id="hint">“No” is feeling shy today 😈</div>
 
 <section class="result" id="result">
@@ -179,6 +196,11 @@ Meri duniya tumhare saath hi poorn hai. 💖
   </p>
 </section>
 
+<!-- YouTube iframe (hidden) -->
+<iframe id="ytPlayer" 
+src="https://www.youtube.com/embed/BddP6PYo2gs?enablejsapi=1" 
+title="Kesariya" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 </main>
 
 <script>
@@ -189,22 +211,15 @@ const yesBtn=document.getElementById("yesBtn");
 const noBtn=document.getElementById("noBtn");
 const result=document.getElementById("result");
 const hint=document.getElementById("hint");
-const music=document.getElementById("bgMusic");
+const playBtn=document.getElementById("playMusicBtn");
+const ytFrame=document.getElementById("ytPlayer");
 
-/* Tap or Yes click to start music */
-function startMusic(){
-  if(music.paused){
-    music.volume = 0;
-    music.play().catch(()=>{}); // avoid errors
-    let v = 0;
-    const fade = setInterval(() => {
-      v += 0.02;
-      music.volume = Math.min(v, 0.6);
-      if (v >= 0.6) clearInterval(fade);
-    }, 120);
-  }
-}
-document.body.addEventListener("click", startMusic, { once: true });
+/* Play Kesariya via YouTube API on button click */
+playBtn.onclick = () => {
+  // Add autoplay to iframe
+  ytFrame.src += "&autoplay=1";
+  playBtn.style.display="none";
+};
 
 /* Confetti */
 const canvas=document.getElementById("confettiCanvas");
@@ -236,7 +251,6 @@ yesBtn.onclick=()=>{
   hint.style.display="none";
   result.style.display="block";
   confettiInstance({particleCount:300,spread:140});
-  startMusic(); // ensure music plays
   // Heart burst
   for(let i=0;i<30;i++){
     const h=document.createElement("div");
